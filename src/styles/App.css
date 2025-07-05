@@ -1,0 +1,306 @@
+.main-background {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.app-container {
+  position: relative;
+  z-index: 3;
+  max-width: 90%; /* Make container a bit narrower */
+}
+
+.app-card {
+  background-color: rgba(53, 62, 67, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  font-size: 0.95rem; /* Make all text in card slightly smaller */
+  max-width: 700px; /* Limit max width */
+  margin: 0 auto; /* Center the card */
+}
+
+.app-card-header {
+  background-color: rgba(37, 37, 37, 0.7);
+  border-bottom: 1px solid rgba(216, 213, 219, 0.3);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: 0.8rem 1rem; /* Smaller padding for header */
+}
+
+.app-card-title {
+  color: #D8D5DB;
+  font-size: 1.5rem; /* Smaller title */
+  margin-bottom: 0.3rem; /* Less margin */
+}
+
+.app-card-subtitle {
+  color: #ADACB5;
+  margin-bottom: 0;
+  font-size: 0.85rem; /* Smaller subtitle */
+}
+
+.app-card-subtitle a {
+  color: #FF5733;
+}
+
+.app-card-body {
+  padding: 1.5rem 1.2rem; /* Smaller padding */
+}
+
+.unemployed-image {
+  max-width: 250px; /* Smaller image */
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.analyze-button {
+  border-width: 2px;
+  background: transparent;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 0.95rem; /* Smaller button text */
+  padding: 0.4rem 1rem; /* Smaller button */
+}
+
+.analyze-button.loading {
+  background: rgba(220, 53, 69, 0.2);
+}
+
+.error-alert {
+  background-color: rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.4);
+  color: #ffcccc;
+  font-size: 0.9rem; /* Smaller alert text */
+}
+
+.result-button {
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 0.95rem; /* Smaller button text */
+  padding: 0.4rem 1rem; /* Smaller button */
+}
+
+/* Floating control buttons */
+.floating-buttons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.control-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(37, 37, 37, 0.7);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.control-button:hover {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(37, 37, 37, 0.9);
+}
+
+.music-button {
+  background-color: rgba(65, 65, 65, 0.7);
+}
+
+.github-button {
+  background-color: rgba(36, 41, 46, 0.7);
+  text-decoration: none;
+}
+
+.share-button {
+  background-color: rgba(29, 155, 240, 0.7);
+}
+
+.donate-button {
+  background-color: rgba(255, 152, 0, 0.7);
+}
+
+/* Donation modal */
+.donation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.donation-content {
+  background-color: rgba(53, 62, 67, 0.95);
+  border-radius: 16px;
+  padding: 25px;
+  position: relative;
+  max-width: 350px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  color: #D8D5DB;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #D8D5DB;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-container {
+  margin: 20px auto;
+  max-width: 200px;
+}
+
+.donation-qr {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.donation-email {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #ADACB5;
+}
+
+/* Top corner elements */
+.top-left-links, 
+.top-right-controls {
+  position: fixed;
+  top: 15px;
+  z-index: 1000;
+  display: flex;
+  gap: 15px;
+}
+
+.top-left-links {
+  left: 15px;
+}
+
+.top-right-controls {
+  right: 15px;
+}
+
+.top-link, 
+.control-button {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+}
+
+.top-link:hover, 
+.control-button:hover {
+  background-color: rgba(20, 20, 20, 0.8);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.control-button {
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  font-size: 1.1rem;
+}
+
+/* Make sure content is responsive on smaller screens */
+@media (max-width: 576px) {
+  .top-left-links, 
+  .top-right-controls {
+    top: 10px;
+    gap: 8px;
+  }
+  
+  .top-link, 
+  .control-button {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .control-button {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-card-title {
+    font-size: 1.3rem;
+  }
+  
+  .app-card-body {
+    padding: 1.1rem 1rem;
+  }
+  
+  .unemployed-image {
+    max-width: 185px;
+  }
+}
+
+/* Media query adjustments */
+@media (min-width: 768px) {
+  .floating-buttons {
+    flex-direction: row;
+    bottom: 30px;
+    right: 30px;
+  }
+  
+  .donation-content {
+    padding: 30px;
+    max-width: 400px;
+  }
+}
