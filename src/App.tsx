@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { Alert, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
+import ResultModal from './components/ResultModal';
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
@@ -9,6 +10,7 @@ function App() {
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -38,7 +40,11 @@ function App() {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Ensure proper base64 format for API
+        resolve(result);
+      };
       reader.onerror = reject;
     });
   };
@@ -52,7 +58,11 @@ function App() {
     try {
       const base64Image = await convertFileToBase64(file);
       
-      const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+      const apiKey = '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';
+      
+      console.log('Sending request to OpenRouter API...');
+      
+      const requestData = {
         model: "google/gemini-flash-1.5",
         messages: [
           {
@@ -71,35 +81,73 @@ function App() {
             ]
           }
         ],
-        max_tokens: 2000
-      }, {
+        max_tokens: 2000,
+        temperature: 0.7
+      };
+      
+      const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', requestData, {
         headers: {
-          'Authorization': 'Bearer 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',
-          'HTTP-Referer': 'http://localhost:3000',
+          'Authorization': `Bearer ${apiKey}`,
+          'HTTP-Referer': window.location.origin,
           'X-Title': 'Resume Roaster',
           'Content-Type': 'application/json'
         },
-        timeout: 60000
+        timeout: 120000 // Increased timeout to 2 minutes
       });
+
+      console.log('API Response:', response.data);
 
       if (response.data.choices?.[0]?.message?.content) {
         setResult(response.data.choices[0].message.content);
+        setShowModal(true);
+      } else if (response.data.error) {
+        console.error('API Error in response:', response.data.error);
+        setError(`ข้อผิดพลาดจาก API: ${response.data.error.message || 'ไม่ทราบสาเหตุ'}`);
       } else {
-        setError('ไม่สามารถรับผลลัพธ์จาก AI ได้ กรุณาลองใหม่อีกครั้ง');
+        console.error('Unexpected response format:', response.data);
+        setError('ข้อผิดพลาด: ไม่สามารถรับผลลัพธ์จาก AI ได้ รูปแบบการตอบกลับไม่ถูกต้อง');
       }
     } catch (err: any) {
-      console.error('API Error:', err.response?.data);
+      console.error('Full error object:', err);
+      console.error('Error response:', err.response);
+      console.error('Error data:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      console.error('Error headers:', err.response?.headers);
       
-      if (err.response?.status === 413 || err.response?.data?.error?.message?.includes('size')) {
-        setError('ข้อผิดพลาด: ไฟล์ใหญ่เกินไป กรุณาลดขนาดไฟล์');
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setError('ข้อผิดพลาด: หมดเวลาการเชื่อมต่อ AI ใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง');
+      } else if (err.response?.status === 401) {
+        setError('ข้อผิดพลาด: API key ไม่ถูกต้องหรือหมดอายุ กรุณาตรวจสอบ API key ใหม่ที่ https://openrouter.ai/keys');
+      } else if (err.response?.status === 403) {
+        setError('ข้อผิดพลาด: API key ไม่มีสิทธิ์เข้าถึงหรือ credits หมด กรุณาตรวจสอบ account balance');
+      } else if (err.response?.status === 413 || err.response?.data?.error?.message?.includes('size')) {
+        setError('ข้อผิดพลาด: ไฟล์รูปภาพใหญ่เกินไป กรุณาลดขนาดไฟล์หรือบีบอัดรูปภาพ');
       } else if (err.response?.status === 429) {
-        setError('ข้อผิดพลาด: ใช้งานเกินขีดจำกัด กรุณารอสักครู่แล้วลองใหม่');
+        setError('ข้อผิดพลาด: ใช้งานเกินขีดจำกัด กรุณารอสักครู่แล้วลองใหม่อีกครั้ง');
+      } else if (err.response?.status === 400) {
+        const errorMsg = err.response?.data?.error?.message || '';
+        if (errorMsg.includes('image') || errorMsg.includes('format')) {
+          setError('ข้อผิดพลาด: รูปภาพไม่ชัดเจนหรือรูปแบบไฟล์ไม่รองรับ กรุณาใช้รูป PNG/JPG ที่คมชัด');
+        } else {
+          setError(`ข้อผิดพลาดในการส่งข้อมูล: ${errorMsg || 'รูปแบบข้อมูลไม่ถูกต้อง'}`);
+        }
+      } else if (err.response?.status === 500) {
+        setError('ข้อผิดพลาด: เซิร์ฟเวอร์ AI มีปัญหา กรุณาลองใหม่อีกครั้งใน 1-2 นาที');
+      } else if (err.response?.status === 502 || err.response?.status === 503) {
+        setError('ข้อผิดพลาด: บริการ AI ไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง');
+      } else if (!navigator.onLine) {
+        setError('ข้อผิดพลาด: ไม่มีการเชื่อมต่ออินเทอร์เน็ต กรุณาตรวจสอบการเชื่อมต่อ');
       } else {
-        setError('ข้อผิดพลาด: ไม่สามารถวิเคราะห์ได้ กรุณาลองใหม่อีกครั้ง');
+        const errorMessage = err.response?.data?.error?.message || err.message || 'ไม่ทราบสาเหตุ';
+        setError(`ข้อผิดพลาดที่ไม่คาดคิด: ${errorMessage} (Status: ${err.response?.status || 'Unknown'})`);
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -172,21 +220,25 @@ function App() {
               )}
 
               {result && (
-                <Card className="mt-4">
-                  <Card.Header>
-                    <h5>🗯️ ผลการวิเคราะห์</h5>
-                  </Card.Header>
-                  <Card.Body>
-                    <div style={{ whiteSpace: 'pre-wrap' }}>
-                      {result}
-                    </div>
-                  </Card.Body>
-                </Card>
+                <div className="text-center mt-3">
+                  <Button 
+                    variant="success" 
+                    onClick={() => setShowModal(true)}
+                  >
+                    🗯️ ดูผลการวิเคราะห์
+                  </Button>
+                </div>
               )}
             </Card.Body>
           </Card>
         </Col>
       </Row>
+
+      <ResultModal 
+        show={showModal}
+        onHide={handleCloseModal}
+        result={result}
+      />
     </Container>
   );
 }
