@@ -156,8 +156,8 @@ function App() {
         <Col md={8}>
           <Card>
             <Card.Header className="text-center">
-              <h2>🔥 Resume Roaster 🔥</h2>
-              <p className="mb-0">เว็บรีวิว resume แบบหยาบคายๆ</p>
+              <h2>🔥 Unemployed Final Boss 🔥</h2>
+              <p>Song for you bro 🥺👉🏻👈🏻 <a href="https://www.youtube.com/watch?v=2dbR2JZmlWo&t=16s" target="_blank" rel="noopener noreferrer" style={{ color: '#FF5733' }}>ใครไม่กดเป็นเกย์</a></p>
             </Card.Header>
             <Card.Body>
               <div 
@@ -171,7 +171,7 @@ function App() {
                 ) : (
                   <div>
                     <p>ลากไฟล์รูปภาพ resume มาวางที่นี่</p>
-                    <p className="text-muted">รองรับไฟล์: PNG, JPG, JPEG (ไม่เกิน 5MB)</p>
+                    <p className="text-muted">PNG, JPG, JPEG (🤬ขอไม่เกิน 5MB โอเค??? ไม่มีงบมาทำเยอะขนาดนั้น และอย่าเอา pdf มาลง)</p>
                   </div>
                 )}
               </div>
@@ -205,10 +205,10 @@ function App() {
                   {loading ? (
                     <>
                       <Spinner size="sm" className="me-2" />
-                      กำลังวิเคราะห์...
+                      กำลังวิเคราะห์...รอแป๊บ
                     </>
                   ) : (
-                    '🚀 ด่ากันเลย!'
+                    '🚀 วิเคระห์!'
                   )}
                 </Button>
               </div>
@@ -225,7 +225,7 @@ function App() {
                     variant="success" 
                     onClick={() => setShowModal(true)}
                   >
-                    🗯️ ดูผลการวิเคราะห์
+                    🗯️ ผลการวิเคราะห์
                   </Button>
                 </div>
               )}

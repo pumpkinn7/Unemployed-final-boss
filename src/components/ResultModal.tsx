@@ -1,11 +1,11 @@
 import { Button, Modal } from 'react-bootstrap';
+import meWhenImage from '../assets/me when.jfif';
 
 interface ResultModalProps {
   show: boolean;
   onHide: () => void;
   result: string;
 }
-
 function ResultModal({ show, onHide, result }: ResultModalProps) {
   return (
     <Modal 
@@ -22,6 +22,11 @@ function ResultModal({ show, onHide, result }: ResultModalProps) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+        <img 
+          src={meWhenImage} 
+          alt="Me When" 
+          style={{ width: '25%', display: 'block', margin: '0 auto 10px auto' }} 
+        />
         <div style={{ whiteSpace: 'pre-wrap', fontSize: '16px', lineHeight: '1.6' }}>
           {result}
         </div>
