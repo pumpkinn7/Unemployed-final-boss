@@ -1,56 +1,30 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { Alert, Button, Card, Col, Container, Row, Spinner } from 'react-bootstrap';
-import { useDropzone } from 'react-dropzone';
+import unemployedImage from './assets/1593574682.jfif';
+import BackgroundAnimations from './components/BackgroundAnimations';
+import FileUpload from './components/FileUpload';
+import MusicPlayer from './components/MusicPlayer';
 import ResultModal from './components/ResultModal';
+import { convertFileToBase64 } from './services/resumeAnalyzer';
+import './styles/animations.css';
+import { handleApiError } from './utils/errorHandler';
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<string>('');
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const onDrop = (acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      const selectedFile = acceptedFiles[0];
-      setFile(selectedFile);
-      setResult('');
-      setError('');
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-    }
-  };
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp']
-    },
-    maxFiles: 1,
-    maxSize: 5 * 1024 * 1024 // 5MB max
-  });
-
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const result = reader.result as string;
-        // Ensure proper base64 format for API
-        resolve(result);
-      };
-      reader.onerror = reject;
-    });
+  const handleFileSelect = (selectedFile: File) => {
+    setFile(selectedFile);
+    setResult('');
+    setError('');
   };
 
   const analyzeResume = async () => {
-    if (!file || !imagePreview) return;
+    if (!file) return;
 
     setLoading(true);
     setError('');
@@ -58,9 +32,13 @@ function App() {
     try {
       const base64Image = await convertFileToBase64(file);
       
-      const apiKey = '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';
+      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
       
-      console.log('Sending request to OpenRouter API...');
+      if (!apiKey || apiKey === 'your_api_key_here') {
+        // Show popup for API configuration issues
+        alert('API Ai หมดอายุ 💩💩\n(ไม่มีงบทำเว็บขนาดนั้น ถ้าอยากให้ทำต่อ โดเนทด้วย👌🏻)');
+        return;
+      }
       
       const requestData = {
         model: "google/gemini-flash-1.5",
@@ -70,7 +48,7 @@ function App() {
             content: [
               {
                 type: "text",
-                text: "กรุณาวิเคราะห์ resume ในรูปภาพนี้แล้วให้คำวิจารณ์แบบหยาบคายๆ ด่ายาวๆ เป็นภาษาไทย ใช้คำพูดแบบเสียดสี เย้ยหยัน ชี้จุดด้อย และให้คำแนะนำปรับปรุงแบบตรงไปตรงมา ไม่ต้องสุภาพ"
+                text: "เขียนเรียงความความด่า resume ยาว 10-15 บรรทัด แบบหยาบคายๆ แบบตรงไปตรงมา ใช้คำพูดแบบเสียดสี เย้ยหยัน ชี้จุดด้อยไม่ต้องสุภาพ (กรุณาใช้ภาษาไทย+ด่าให้สุดๆ แบบไม่ต้องเกรงใจใครนะครับ อยากให้ด่าแบบตรงไปตรงมาเลย ไม่ต้องกลัวเสียความรู้สึก ด่าให้เหมือนตัวละคร Deadpool หรือ Deadpool 2 ที่พูดจาเสียดสีและตรงไปตรงมา)",
               },
               {
                 type: "image_url",
@@ -84,7 +62,7 @@ function App() {
         max_tokens: 2000,
         temperature: 0.7
       };
-      
+
       const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', requestData, {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -92,7 +70,7 @@ function App() {
           'X-Title': 'Resume Roaster',
           'Content-Type': 'application/json'
         },
-        timeout: 120000 // Increased timeout to 2 minutes
+        timeout: 120000
       });
 
       console.log('API Response:', response.data);
@@ -102,44 +80,19 @@ function App() {
         setShowModal(true);
       } else if (response.data.error) {
         console.error('API Error in response:', response.data.error);
-        setError(`ข้อผิดพลาดจาก API: ${response.data.error.message || 'ไม่ทราบสาเหตุ'}`);
+        alert('API Ai หมดอายุ 💩💩\n(ไม่มีงบทำเว็บขนาดนั้น ถ้าอยากให้ทำต่อ โดเนทด้วย👌🏻)');
       } else {
         console.error('Unexpected response format:', response.data);
         setError('ข้อผิดพลาด: ไม่สามารถรับผลลัพธ์จาก AI ได้ รูปแบบการตอบกลับไม่ถูกต้อง');
       }
     } catch (err: any) {
-      console.error('Full error object:', err);
-      console.error('Error response:', err.response);
-      console.error('Error data:', err.response?.data);
-      console.error('Error status:', err.response?.status);
-      console.error('Error headers:', err.response?.headers);
+      const errorMessage = handleApiError(err);
       
-      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-        setError('ข้อผิดพลาด: หมดเวลาการเชื่อมต่อ AI ใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง');
-      } else if (err.response?.status === 401) {
-        setError('ข้อผิดพลาด: API key ไม่ถูกต้องหรือหมดอายุ กรุณาตรวจสอบ API key ใหม่ที่ https://openrouter.ai/keys');
-      } else if (err.response?.status === 403) {
-        setError('ข้อผิดพลาด: API key ไม่มีสิทธิ์เข้าถึงหรือ credits หมด กรุณาตรวจสอบ account balance');
-      } else if (err.response?.status === 413 || err.response?.data?.error?.message?.includes('size')) {
-        setError('ข้อผิดพลาด: ไฟล์รูปภาพใหญ่เกินไป กรุณาลดขนาดไฟล์หรือบีบอัดรูปภาพ');
-      } else if (err.response?.status === 429) {
-        setError('ข้อผิดพลาด: ใช้งานเกินขีดจำกัด กรุณารอสักครู่แล้วลองใหม่อีกครั้ง');
-      } else if (err.response?.status === 400) {
-        const errorMsg = err.response?.data?.error?.message || '';
-        if (errorMsg.includes('image') || errorMsg.includes('format')) {
-          setError('ข้อผิดพลาด: รูปภาพไม่ชัดเจนหรือรูปแบบไฟล์ไม่รองรับ กรุณาใช้รูป PNG/JPG ที่คมชัด');
-        } else {
-          setError(`ข้อผิดพลาดในการส่งข้อมูล: ${errorMsg || 'รูปแบบข้อมูลไม่ถูกต้อง'}`);
-        }
-      } else if (err.response?.status === 500) {
-        setError('ข้อผิดพลาด: เซิร์ฟเวอร์ AI มีปัญหา กรุณาลองใหม่อีกครั้งใน 1-2 นาที');
-      } else if (err.response?.status === 502 || err.response?.status === 503) {
-        setError('ข้อผิดพลาด: บริการ AI ไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง');
-      } else if (!navigator.onLine) {
-        setError('ข้อผิดพลาด: ไม่มีการเชื่อมต่ออินเทอร์เน็ต กรุณาตรวจสอบการเชื่อมต่อ');
+      // Show popup for API errors, regular alert for other errors
+      if (errorMessage === 'API_ERROR') {
+        alert('API Ai หมดอายุ 💩💩\n(ไม่มีงบทำเว็บขนาดนั้น ถ้าอยากให้ทำต่อ โดเนทด้วย👌🏻)');
       } else {
-        const errorMessage = err.response?.data?.error?.message || err.message || 'ไม่ทราบสาเหตุ';
-        setError(`ข้อผิดพลาดที่ไม่คาดคิด: ${errorMessage} (Status: ${err.response?.status || 'Unknown'})`);
+        setError(errorMessage);
       }
     } finally {
       setLoading(false);
@@ -151,95 +104,82 @@ function App() {
   };
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
-          <Card>
-            <Card.Header className="text-center">
-              <h2>🔥 Unemployed Final Boss 🔥</h2>
-              <p>Song for you bro 🥺👉🏻👈🏻 <a href="https://www.youtube.com/watch?v=2dbR2JZmlWo&t=16s" target="_blank" rel="noopener noreferrer" style={{ color: '#FF5733' }}>ใครไม่กดเป็นเกย์</a></p>
-            </Card.Header>
-            <Card.Body>
-              <div 
-                {...getRootProps()} 
-                className={`border border-dashed rounded p-4 text-center mb-3 ${isDragActive ? 'border-primary bg-light' : 'border-secondary'}`}
-                style={{ cursor: 'pointer' }}
-              >
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>วางไฟล์ตรงนี้...</p>
-                ) : (
-                  <div>
-                    <p>ลากไฟล์รูปภาพ resume มาวางที่นี่</p>
-                    <p className="text-muted">PNG, JPG, JPEG (🤬ขอไม่เกิน 5MB โอเค??? ไม่มีงบมาทำเยอะขนาดนั้น และอย่าเอา pdf มาลง)</p>
-                  </div>
-                )}
-              </div>
+    <div className="main-background">
+      <MusicPlayer />
+      <BackgroundAnimations />
 
-              {file && imagePreview && (
-                <Alert variant="info">
-                  <strong>ไฟล์ที่เลือก:</strong> {file.name}
-                  <div className="mt-3">
-                    <img 
-                      src={imagePreview} 
-                      alt="Resume preview" 
-                      style={{ 
-                        maxWidth: '100%', 
-                        maxHeight: '300px', 
-                        objectFit: 'contain',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px'
-                      }} 
-                    />
-                  </div>
-                </Alert>
-              )}
+      <Container style={{ position: 'relative', zIndex: 3, opacity: 0.9 }}>
+        <Row className="justify-content-center">
+          <Col md={8}>
+            <Card style={{ backgroundColor: '#353e43', border: 'none' }}>
+              <Card.Header className="text-center" style={{ backgroundColor: '#252525', borderBottom: '1px solid #D8D5DB' }}>
+                <h3 style={{ color: '#D8D5DB' }}>Unemployed Final Boss🔥</h3>
+                <p style={{ color: '#ADACB5', marginBottom: 0 }}>
+                  🥺👉🏻👈🏻 Song for you <a href="https://www.youtube.com/watch?v=2dbR2JZmlWo&t=16s" target="_blank" rel="noopener noreferrer" style={{ color: '#FF5733' }}>Clickk</a>
+                </p>
+              </Card.Header>
+              <Card.Body>
+                <div className="text-center mb-4">
+                  <img 
+                    src={unemployedImage} 
+                    alt="Unemployed"
+                    style={{
+                      maxWidth: '300px',
+                      width: '100%',
+                      height: 'auto',
+                      borderRadius: '8px'
+                    }}
+                  />
+                </div>
 
-              <div className="text-center">
-                <Button 
-                  variant="danger" 
-                  size="lg"
-                  onClick={analyzeResume}
-                  disabled={!file || loading}
-                >
-                  {loading ? (
-                    <>
-                      <Spinner size="sm" className="me-2" />
-                      กำลังวิเคราะห์...รอแป๊บ
-                    </>
-                  ) : (
-                    '🚀 วิเคระห์!'
-                  )}
-                </Button>
-              </div>
+                <FileUpload file={file} onFileSelect={handleFileSelect} />
 
-              {error && (
-                <Alert variant="danger" className="mt-3">
-                  {error}
-                </Alert>
-              )}
-
-              {result && (
-                <div className="text-center mt-3">
+                <div className="text-center">
                   <Button 
-                    variant="success" 
-                    onClick={() => setShowModal(true)}
+                    variant="outline-danger" 
+                    size="lg"
+                    onClick={analyzeResume}
+                    disabled={!file || loading}
                   >
-                    🗯️ ผลการวิเคราะห์
+                    {loading ? (
+                      <>
+                        <Spinner size="sm" className="me-2" />
+                        กำลังวิเคราะห์...รอแป๊บ
+                      </>
+                    ) : (
+                      '🚀 วิเคระห์!'
+                    )}
                   </Button>
                 </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
 
-      <ResultModal 
-        show={showModal}
-        onHide={handleCloseModal}
-        result={result}
-      />
-    </Container>
+                {error && (
+                  <Alert variant="danger" className="mt-3">
+                    {error}
+                  </Alert>
+                )}
+
+                {result && (
+                  <div className="text-center mt-3">
+                    <Button 
+                      variant="success" 
+                      onClick={() => setShowModal(true)}
+                    >
+                      🗯️ ผลการวิเคราะห์
+                    </Button>
+                  </div>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        <ResultModal 
+          show={showModal}
+          onHide={handleCloseModal}
+          result={result}
+        />
+      </Container>
+    </div>
   );
 }
 
