@@ -24,7 +24,7 @@ const DonateModal = ({ show, onHide }: DonateModalProps) => {
   return (
     <div className="donation-modal" onClick={onHide}>
       <div className="donation-content" onClick={e => e.stopPropagation()}>
-        <h3 className="mb-4">i'm broke give me money</h3>
+        <h3 className="text-center">i'm broke give me money😭</h3>
         <div className="qr-container">
           <img 
             src={donateImage} 
@@ -32,7 +32,7 @@ const DonateModal = ({ show, onHide }: DonateModalProps) => {
             className="donation-qr"
           />
         </div>
-        <p className="donation-message">ขอขอบคุณ สำหรับค่ากาแฟ (และเบียร์)</p>
+        <p className="donation-message text-center">ขอขอบคุณ <br /> สำหรับค่ากาแฟ (และเบียร์)</p>
       </div>
     </div>
   );
