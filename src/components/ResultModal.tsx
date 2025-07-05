@@ -56,7 +56,7 @@ const ResultModal = memo(({ show, onHide, result }: ResultModalProps) => {
               setIsCopied(true);
             }}
           >
-            {isCopied ? 'คัดลอกแล้ว (ลอกบ่อยแบบนี้ไงเลยทำไรไม่เป็น)' : 'คัดลอก'}
+            {isCopied ? 'คัดลอกแล้ว' : 'คัดลอก'}
           </button>
         </div>
       </div>
