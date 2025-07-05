@@ -234,11 +234,12 @@ function App() {
                     </Button>
                   ) : (
                     <Button 
-                      variant="outline-info" 
+                      variant="outline"
+                      style={{ borderColor: '#8B4513', color: '#ffffff' }}
                       onClick={() => setShowModal(true)}
                       className="result-button"
                     >
-                      🗯️ ผลการวิเคราะห์
+                      💩 ผลการวิเคราะห์
                     </Button>
                   )}
                 </div>

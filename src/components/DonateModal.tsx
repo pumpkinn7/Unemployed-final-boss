@@ -11,7 +11,6 @@ const DonateModal = ({ show, onHide }: DonateModalProps) => {
   return (
     <div className="donation-modal" onClick={onHide}>
       <div className="donation-content" onClick={e => e.stopPropagation()}>
-        <button className="close-button" onClick={onHide}>×</button>
         <h3 className="mb-4">i'm broke give me money</h3>
         <div className="qr-container">
           <img 

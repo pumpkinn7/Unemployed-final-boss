@@ -1,4 +1,3 @@
-import { Button, Modal } from 'react-bootstrap';
 import meWhenImage from '../assets/me when.jfif';
 
 interface ResultModalProps {
@@ -6,47 +5,37 @@ interface ResultModalProps {
   onHide: () => void;
   result: string;
 }
+
 function ResultModal({ show, onHide, result }: ResultModalProps) {
+  if (!show) return null;
+
   return (
-    <Modal 
-      show={show} 
-      onHide={onHide} 
-      size="lg" 
-      centered
-      backdrop="static"
-      keyboard={false}
-    >
-      <Modal.Header closeButton className="bg-light text-dark">
-        <Modal.Title>
-          <h5 className="mb-0">💀เหตุผลที่ทำให้ไม่มีงานทำ</h5>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+    <div className="donation-modal" onClick={onHide}>
+      <div className="donation-content result-modal-content" onClick={e => e.stopPropagation()}>
+        <h3 className="mb-4">💀เหตุผลที่ทำให้ไม่มีงานทำ</h3>
         <img 
           src={meWhenImage} 
           alt="Me When" 
-          style={{ width: '25%', display: 'block', margin: '0 auto 10px auto' }} 
+          className="result-image"
         />
-        <div style={{ whiteSpace: 'pre-wrap', fontSize: '16px', lineHeight: '1.6' }}>
+        <div className="result-text">
           {result}
         </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          ปิด
-        </Button>
-        <Button 
-          variant="white" 
-          style={{ border: '1px solid black' }}
-          onClick={() => {
-            navigator.clipboard.writeText(result);
-            alert('ไม่ให้ลอก! 😜');
-          }}
-        >
-          คัดลอก
-        </Button>
-      </Modal.Footer>
-    </Modal>
+        <div className="result-buttons">
+          <button className="result-button btn-secondary" onClick={onHide}>
+            ปิด
+          </button>
+            <button 
+            className="result-button btn-copy"
+            onClick={() => {
+              navigator.clipboard.writeText(result);
+            }}
+            >
+            คัดลอก
+            </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

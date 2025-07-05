@@ -342,3 +342,72 @@
     max-width: 400px;
   }
 }
+
+/* Result modal specific styles */
+.result-modal-content {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.result-image {
+  width: 25%;
+  display: block;
+  margin: 0 auto 1rem auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.result-text {
+  white-space: pre-wrap;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #f8f9fa;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.result-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.result-button {
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.result-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(108, 117, 125, 0.3);
+  border-color: rgba(108, 117, 125, 0.5);
+}
+
+.btn-copy {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-copy:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
