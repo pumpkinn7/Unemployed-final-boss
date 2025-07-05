@@ -147,60 +147,98 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: modalFadeIn 0.3s ease;
 }
 
 .donation-content {
-  background-color: rgba(53, 62, 67, 0.95);
-  border-radius: 16px;
-  padding: 25px;
+  background: rgba(53, 62, 67, 0.6);
+  border-radius: 20px;
+  padding: 2rem;
   position: relative;
-  max-width: 350px;
   width: 90%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  max-width: 400px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
   text-align: center;
-  color: #D8D5DB;
+  animation: modalSlideIn 0.3s ease;
+}
+
+.donation-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.qr-container {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem auto;
+  width: fit-content;
+}
+
+.donation-qr {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.donation-message {
+  margin-top: 1rem;
+  color: #f8f9fa;
+  font-size: 0.9rem;
 }
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: transparent;
   border: none;
+  color: #fff;
   font-size: 24px;
-  color: #D8D5DB;
   cursor: pointer;
-  padding: 0;
   width: 30px;
   height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s ease;
 }
 
-.qr-container {
-  margin: 20px auto;
-  max-width: 200px;
+.close-button:hover {
+  transform: scale(1.1);
 }
 
-.donation-qr {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.donation-email {
-  margin-top: 15px;
-  font-size: 0.9rem;
-  color: #ADACB5;
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Top corner elements */
