@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import donateImage from '../assets/45442422424.png';
 
 interface DonateModalProps {
@@ -6,6 +7,18 @@ interface DonateModalProps {
 }
 
 const DonateModal = ({ show, onHide }: DonateModalProps) => {
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [show]);
+
   if (!show) return null;
 
   return (

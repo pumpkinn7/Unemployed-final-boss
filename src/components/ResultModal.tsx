@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import meWhenImage from '../assets/me when.jfif';
 
 interface ResultModalProps {
@@ -7,12 +8,24 @@ interface ResultModalProps {
 }
 
 function ResultModal({ show, onHide, result }: ResultModalProps) {
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [show]);
+
   if (!show) return null;
 
   return (
     <div className="donation-modal" onClick={onHide}>
       <div className="donation-content result-modal-content" onClick={e => e.stopPropagation()}>
-        <h3 className="mb-4">💀เหตุผลที่ทำให้ไม่มีงานทำ</h3>
+        <h4 className="mb-4">💀เหตุผลไม่มีงานทำ</h4>
         <img 
           src={meWhenImage} 
           alt="Me When" 
@@ -25,14 +38,14 @@ function ResultModal({ show, onHide, result }: ResultModalProps) {
           <button className="result-button btn-secondary" onClick={onHide}>
             ปิด
           </button>
-            <button 
+          <button 
             className="result-button btn-copy"
             onClick={() => {
               navigator.clipboard.writeText(result);
             }}
-            >
+          >
             คัดลอก
-            </button>
+          </button>
         </div>
       </div>
     </div>
