@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import donateImage from '../assets/45442422424.png';
 
 interface DonateModalProps {
@@ -7,19 +7,34 @@ interface DonateModalProps {
 }
 
 const DonateModal = ({ show, onHide }: DonateModalProps) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   useEffect(() => {
     if (show) {
       document.body.style.overflow = 'hidden';
+      const img = new window.Image();
+      img.src = donateImage;
+      img.onload = () => setImageLoaded(true);
     } else {
       document.body.style.overflow = 'unset';
+      setImageLoaded(false);
     }
-    
     return () => {
       document.body.style.overflow = 'unset';
+      setImageLoaded(false);
     };
   }, [show]);
 
   if (!show) return null;
+  if (!imageLoaded) {
+    return (
+      <div className="donation-modal" onClick={onHide}>
+        <div className="donation-content" onClick={e => e.stopPropagation()}>
+          <p className="text-center">รอสักครู่...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="donation-modal" onClick={onHide}>
@@ -32,7 +47,7 @@ const DonateModal = ({ show, onHide }: DonateModalProps) => {
             className="donation-qr"
           />
         </div>
-        <p className="donation-message text-center">ขอขอบคุณ <br /> สำหรับค่ากาแฟ (และเบียร์)</p>
+        <p className="donation-message text-center">ขอขอบคุณ <br /> สำหรับค่ากาแฟ(และเบียร์)</p>
       </div>
     </div>
   );
